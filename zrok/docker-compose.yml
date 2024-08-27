@@ -6,7 +6,7 @@ services:
     command: chown -Rc 2171:2171 /mnt/.zrok
     user: root
     volumes:
-      - zrok_env:/mnt/.zrok
+      - config:/mnt/.zrok
 
   # enable zrok environment
   zrok-enable:
@@ -18,7 +18,7 @@ services:
         condition: service_completed_successfully
     entrypoint: zrok-enable.bash
     volumes:
-      - zrok_env:/mnt
+      - config:/mnt
     environment:
       HOME: /mnt
       ZROK_ENABLE_TOKEN:
@@ -36,7 +36,7 @@ services:
       zrok-enable:
         condition: service_completed_successfully
     volumes:
-      - zrok_env:/mnt
+      - config:/mnt
     environment:
       # internal configuration
       HOME: /mnt            # zrok homedir in container
@@ -62,4 +62,4 @@ services:
   #  command: test endpoint --address 0.0.0.0  # 9090
 
 volumes:
-  zrok_env:
+  config:
