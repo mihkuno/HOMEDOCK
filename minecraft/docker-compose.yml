@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    hostname: server-minecraft # This name will be the one on the tailscale network
+    container_name: minecraft-network
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./:/var/lib # State data will be stored in this directory
+      - /dev/net/tun:/dev/net/tun # Required for tailscale to work
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    command: tailscaled
+    privileged: true
+    restart: unless-stopped
+
+
+  minecraft:
+    image: marctv/minecraft-papermc-server:latest
+    container_name: minecraft
+    environment:
+      - EULA=TRUE
+      - TYPE=paper
+      - MEMORY=4G
+    volumes:
+      - ./gamedata:/data
+    restart: unless-stopped
+    network_mode: service:tailscale
