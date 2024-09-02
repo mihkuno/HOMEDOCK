@@ -21,7 +21,7 @@ services:
       - config:/mnt
     environment:
       HOME: /mnt
-      ZROK_ENABLE_TOKEN:
+      ZROK_ENABLE_TOKEN: ${ZROK_ENABLE_TOKEN}
       ZROK_API_ENDPOINT:
       ZROK_ENVIRONMENT_NAME: docker-private-share
 
