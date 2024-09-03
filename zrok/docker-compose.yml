@@ -1,12 +1,12 @@
 services:
-  zrok-init:
-    container_name: zrok-init
+  zrok-setup:
+    container_name: zrok-setup
     image: busybox
     # matches uid:gid of "ziggy" in zrok container image
     command: chown -Rc 2171:2171 /mnt/.zrok
     user: root
     volumes:
-      - config:/mnt/.zrok
+      - ./config:/mnt/.zrok
 
   # enable zrok environment
   zrok-enable:
@@ -14,20 +14,20 @@ services:
     user: root
     image: ${ZROK_CONTAINER_IMAGE:-docker.io/openziti/zrok}
     depends_on:
-      zrok-init:
+      zrok-setup:
         condition: service_completed_successfully
     entrypoint: zrok-enable.bash
     volumes:
-      - config:/mnt
+      - ./config:/mnt
     environment:
       HOME: /mnt
       ZROK_ENABLE_TOKEN: ${ZROK_ENABLE_TOKEN}
       ZROK_API_ENDPOINT:
       ZROK_ENVIRONMENT_NAME: docker-private-share
 
-  zrok-share:
+  zrok-tunnel:
     network_mode: host
-    container_name: zrok-share
+    container_name: zrok-tunnel
     user: root
     image: ${ZROK_CONTAINER_IMAGE:-docker.io/openziti/zrok}
     restart: unless-stopped
@@ -36,7 +36,7 @@ services:
       zrok-enable:
         condition: service_completed_successfully
     volumes:
-      - config:/mnt
+      - ./config:/mnt
     environment:
       # internal configuration
       HOME: /mnt            # zrok homedir in container
@@ -61,5 +61,3 @@ services:
   #  image: ${ZROK_CONTAINER_IMAGE:-docker.io/openziti/zrok}
   #  command: test endpoint --address 0.0.0.0  # 9090
 
-volumes:
-  config:
