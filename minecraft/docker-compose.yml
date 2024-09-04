@@ -5,9 +5,9 @@ services:
     image: marctv/minecraft-papermc-server:1.21.1-57
     container_name: minecraft_service
     environment:
-      EULA=TRUE
-      TYPE=paper
-      MEMORY=4G
+      - EULA=TRUE
+      - TYPE=paper
+      - MEMORY=4G
     volumes:
       - ./volume:/data
     restart: unless-stopped
